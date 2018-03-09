@@ -99,11 +99,11 @@ object Lab4 extends jsy.util.JsyApplication with Lab4Like {
 
   // checks that the data values of t as an in-order traversal are strictly ascending order
   def strictlyOrdered(t: Tree): Boolean = {
-    val (b, _) = foldLeft(t)((true, None: Option[Int])){
-      b match {
-        // case b1, None  => b
-        // case b1, b2 => b < b1
-      }
+    val (b, _) = foldLeft(t)((true, None: Option[Int])){  //bool is originally true, empty list is in order
+      (acc, d) => acc match {  //matching on the list
+        case (b1, None) => (b1, Some(d)) //empty list bool is true then looks at next item in list
+        case (b2, Some(d1)) => (d1 < d && b2, Some(d)) //compares next item to previous item.  d1 is previous item d is current item
+      }  //d1 < d && b is false if list is not ascending, then stays false
     }
     b
   }
@@ -127,38 +127,56 @@ object Lab4 extends jsy.util.JsyApplication with Lab4Like {
       case B(_) => TBool
       case Undefined => TUndefined
       case S(_) => TString
-      case Var(x) => ???
-      case Decl(mode, x, e1, e2) => ???
+      case Var(x) => lookup(env, x)
+      case Decl(mode, x, e1, e2) => typeof(extend(env, x, typeof(env, e1)), e2)
       case Unary(Neg, e1) => typeof(env, e1) match {
         case TNumber => TNumber
         case tgot => err(tgot, e1)
       }
-      case Unary(Not, e1) =>
-        typeof(env, e1) match {
-          case TBool => TBool
-          case tgot => err(tgot, e1)
-        }
-      case Binary(Plus, e1, e2) => ???
-        /*typeof(env, e1) match {
-           if
-        }*/
-      case Binary(Minus|Times|Div, e1, e2) => 
-        ???
-      case Binary(Eq|Ne, e1, e2) =>
-        ???
-      case Binary(Lt|Le|Gt|Ge, e1, e2) =>
-        ???
-      case Binary(And|Or, e1, e2) =>
-        ???
-      case Binary(Seq, e1, e2) =>
-        ???
-      case If(e1, e2, e3) =>
-        ???
+      case Unary(Not, e1) => typeof(env, e1) match {
+        case TBool => TBool
+        case tgot => err(tgot, e1) // if we didn't get bool through error
+      }
+      case Binary(Plus, e1, e2) => (typeof(env, e1), typeof(env, e2)) match {
+        case (TNumber, TNumber) => TNumber
+        case (TString, TString) => TString
+        case (tgot, TNumber | TString) => err(tgot, e1)
+        case (TNumber | TString, tgot) => err(tgot, e2)
+      }
+      case Binary(Minus | Times | Div, e1, e2) => (typeof(env, e1), typeof(env, e2)) match {
+        case (TNumber, TNumber) => TNumber
+        case (tgot, TNumber) => err(tgot, e1)
+        case (TNumber, tgot) => err(tgot, e2)
+      }
+      case Binary(Eq | Ne, e1, e2) => (typeof(env, e1), typeof(env, e2)) match {
+        case (t1, _) if hasFunctionTyp(t1) => err(t1, e1)
+        case (_, t2) if hasFunctionTyp(t2) => err(t2, e2)
+        case (t1, t2) => if (t1 == t2) TBool else err(t1, e1)
+      }
+      case Binary(Lt | Le | Gt | Ge, e1, e2) => (typeof(env, e1), typeof(env, e2)) match {
+        case (TNumber, TNumber) => TBool
+        case (TString, TString) => TBool
+        case (tgot, TNumber | TString) => err(tgot, e1)
+        case (TNumber | TString, tgot) => err(tgot, e2)
+        case (tgot1, tgot2) => err(tgot1, e1)
+      }
+      case Binary(And | Or, e1, e2) => (typeof(env, e1), typeof(env, e2)) match {
+        case (TBool, TBool) => TBool
+        case (tgot, TBool) => err(tgot, e1)
+        case (TBool, tgot) => err(tgot, e2)
+      }
+      case Binary(Seq, e1, e2) => (typeof(env, e1), typeof(env, e2)) match {
+        case (_, t2) => t2
+      }
+      case If(e1, e2, e3) => (typeof(env, e1), typeof(env, e2), typeof(env, e3)) match {
+        case (TBool, t1, t2) => if (t1 == t2) t1 else err(t1, e1)
+        case (tgot, _, _) => err(tgot, e1) // maybe not necessary
+      }
       case Function(p, params, tann, e1) => {
         // Bind to env1 an environment that extends env with an appropriate binding if
         // the function is potentially recursive.
         val env1 = (p, tann) match {
-          /***** Add cases here *****/
+          /** *** Add cases here *****/
           case _ => err(TUndefined, e1)
         }
         // Bind to env2 an environment that extends env1 with bindings for params.
@@ -168,6 +186,8 @@ object Lab4 extends jsy.util.JsyApplication with Lab4Like {
         // Check with the possibly annotated return type
         ???
       }
+    }
+  }
       case Call(e1, args) => typeof(env, e1) match {
         case TFunction(params, tret) if (params.length == args.length) =>
           (params zip args).foreach {
