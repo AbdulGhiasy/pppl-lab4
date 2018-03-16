@@ -1,0 +1,13 @@
+## Decl(MConst,square,Function(None,List((n,MTyp(MConst,TNumber))),None,If(Binary(Eq,Var(n),N(0.0)),N(0.0),Binary(Times,Var(n),Var(n)))),Decl(MConst,x,Call(Var(square),List(Call(Var(square),List(N(14.0))))),Var(x))) : number
+## step    0: Decl(MConst,square,Function(None,List((n,MTyp(MConst,TNumber))),None,If(Binary(Eq,Var(n),N(0.0)),N(0.0),Binary(Times,Var(n),Var(n)))),Decl(MConst,x,Call(Var(square),List(Call(Var(square),List(N(14.0))))),Var(x)))
+## step    1: Decl(MConst,x,Call(Function(None,List((n,MTyp(MConst,TNumber))),None,If(Binary(Eq,Var(n),N(0.0)),N(0.0),Binary(Times,Var(n),Var(n)))),List(Call(Function(None,List((n,MTyp(MConst,TNumber))),None,If(Binary(Eq,Var(n),N(0.0)),N(0.0),Binary(Times,Var(n),Var(n)))),List(N(14.0))))),Var(x))
+## step    2: Decl(MConst,x,Call(Function(None,List((n,MTyp(MConst,TNumber))),None,If(Binary(Eq,Var(n),N(0.0)),N(0.0),Binary(Times,Var(n),Var(n)))),List(If(Binary(Eq,N(14.0),N(0.0)),N(0.0),Binary(Times,N(14.0),N(14.0))))),Var(x))
+## step    3: Decl(MConst,x,Call(Function(None,List((n,MTyp(MConst,TNumber))),None,If(Binary(Eq,Var(n),N(0.0)),N(0.0),Binary(Times,Var(n),Var(n)))),List(If(B(false),N(0.0),Binary(Times,N(14.0),N(14.0))))),Var(x))
+## step    4: Decl(MConst,x,Call(Function(None,List((n,MTyp(MConst,TNumber))),None,If(Binary(Eq,Var(n),N(0.0)),N(0.0),Binary(Times,Var(n),Var(n)))),List(Binary(Times,N(14.0),N(14.0)))),Var(x))
+## step    5: Decl(MConst,x,Call(Function(None,List((n,MTyp(MConst,TNumber))),None,If(Binary(Eq,Var(n),N(0.0)),N(0.0),Binary(Times,Var(n),Var(n)))),List(N(196.0))),Var(x))
+## step    6: Decl(MConst,x,If(Binary(Eq,N(196.0),N(0.0)),N(0.0),Binary(Times,N(196.0),N(196.0))),Var(x))
+## step    7: Decl(MConst,x,If(B(false),N(0.0),Binary(Times,N(196.0),N(196.0))),Var(x))
+## step    8: Decl(MConst,x,Binary(Times,N(196.0),N(196.0)),Var(x))
+## step    9: Decl(MConst,x,N(38416.0),Var(x))
+## value: N(38416.0)
+38416.0

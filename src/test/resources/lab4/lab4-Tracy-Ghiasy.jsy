@@ -1,0 +1,6 @@
+const square = function(n:number)
+{ return (n === 0 ? 0:n*n); }
+
+const x = square(square(14));
+
+x
